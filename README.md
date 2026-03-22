@@ -179,7 +179,7 @@ The application will be accessible at `http://localhost:5173`.
 4.  
    ![Incidents](assets/4.png)
 5.  
-   ![Map](assets/5.webp)
+   ![Map](assets/5.png)
 6. 
    ![Sequence](assets/6.png)
 
