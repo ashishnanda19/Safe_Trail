@@ -75,7 +75,7 @@ SafeTraiL follows a **Distributed Event-Driven Architecture**. Real-time locatio
 ![System Architecture](assets/7.png)
 
 ### Sequence Diagram
-![Sequence Diagram](assets/8.jpeg)
+![Sequence Diagram](assets/8.png)
 
 ---
 
