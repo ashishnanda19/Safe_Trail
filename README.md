@@ -24,7 +24,7 @@ SafeTraiL is a premium, real-time emergency response platform designed to bridge
 
 ### External APIs
 - **Nominatim**: Reverse geocoding (Coordinates to Addresses)
-- **GOOGLE MAPS API**: Sourcing nearby emergency infrastructure (Hospitals, Police, Pharmacies)
+- **OpenStreetMap Overpass**: Sourcing nearby emergency infrastructure (Hospitals, Police, Pharmacies)
 - **OSRM Engine**: Real-time routing and ETA calculations
 - **SMS Gateway**: Twilio / Generic SMS API support
 
@@ -108,7 +108,7 @@ SafeTraiL follows a **Distributed Event-Driven Architecture**. Real-time locatio
 - `PATCH /:circleId/accept` - Accept a guardian invitation.
 
 ### Map & Geo-Intelligence (`/api/map`)
-- `GET /nearby` - Search for infrastructure within radius (Google Maps Places).
+- `GET /nearby` - Search for infrastructure within radius (OSM Overpass API).
 - `GET /nearest` - Find the single absolute closest emergency point.
 - `GET /route` - Calculate paths and ETAs via OSRM.
 - `GET /geocode/reverse` - Resolve coordinates to street address.
@@ -170,8 +170,7 @@ ACCESS_TOKEN_SECRET=your_32_char_access_secret
 REFRESH_TOKEN_SECRET=your_32_char_refresh_secret
 
 # External APIs (Defaults provided)
-GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-OVERPASS_API_URL=https://overpass-api.de/api/interpreter (fallback)
+OVERPASS_API_URL=https://overpass-api.de/api/interpreter
 OSRM_API_URL=https://router.project-osrm.org
 NOMINATIM_API_URL=https://nominatim.openstreetmap.org
 
