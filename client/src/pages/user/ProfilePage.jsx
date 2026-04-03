@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { Shield, LogOut, User, Bell, Settings, Key } from 'lucide-react';
+import { Shield, LogOut, User, Bell, Settings, Key, Mic } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { updateMe } from '@/api/user.api';
 import { logout as logoutApi } from '@/api/auth.api';
 import { disconnectSocket } from '@/lib/socket';
 import { Badge, Button, Input, Card, Toggle, Modal } from '@/components/ui';
 import { Navbar, BottomNav } from '@/components/layout/Navbar';
+import VoiceSOSSettings from '@/components/voice/VoiceSOSSettings';
 
 const ROLE_LABELS = { user: 'User', volunteer: 'Volunteer', admin: 'Admin' };
 
@@ -137,6 +138,15 @@ const ProfilePage = () => {
             </div>
             <Toggle label="Auto-share location after SOS" checked={autoShareLocation} onChange={setAutoShareLocation} />
           </div>
+        </Card>
+
+        {/* Voice SOS settings */}
+        <Card className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Mic className="w-4 h-4 text-[#E53E6D]" />
+            <h3 className="font-semibold text-slate-900 text-sm">Voice SOS</h3>
+          </div>
+          <VoiceSOSSettings />
         </Card>
 
         {/* Account */}

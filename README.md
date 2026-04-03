@@ -3,7 +3,7 @@
 SafeTraiL is a premium, real-time emergency response platform designed to bridge the gap between victims, their personal guardians, and professional emergency services. With high-fidelity maps, real-time location tracking, and automated alerting, SafeTraiL ensures that help is never more than a heartbeat away.
 
 ---
-
+ 
 ##  Tech Stack
 
 ### Frontend
@@ -24,7 +24,7 @@ SafeTraiL is a premium, real-time emergency response platform designed to bridge
 
 ### External APIs
 - **Nominatim**: Reverse geocoding (Coordinates to Addresses)
-- **Overpass API**: Sourcing nearby emergency infrastructure (Hospitals, Police, Pharmacies)
+- **GOOGLE MAPS API**: Sourcing nearby emergency infrastructure (Hospitals, Police, Pharmacies)
 - **OSRM Engine**: Real-time routing and ETA calculations
 - **SMS Gateway**: Twilio / Generic SMS API support
 
@@ -81,34 +81,64 @@ SafeTraiL follows a **Distributed Event-Driven Architecture**. Real-time locatio
 
 ##  API Endpoints
 
-### Authentication
-- `POST /api/auth/register` - Create a new user/volunteer account.
-- `POST /api/auth/login` - Authenticate and receive JWT tokens.
-- `POST /api/auth/refresh` - Rotate expired access tokens.
-- `POST /api/auth/logout` - Invalidate current session.
+### Authentication (`/api/auth`)
+- `POST /register` - Create a new user/volunteer account.
+- `POST /login` - Authenticate and receive JWT tokens.
+- `POST /refresh` - Rotate expired access tokens.
+- `POST /logout` - Invalidate current session.
 
-### Emergency (SOS)
-- `POST /api/sos/trigger` - Initiate an SOS event (pings guardians + queues alerts).
-- `POST /api/sos/:eventId/location` - victim-side location pings.
-- `GET /api/sos/:eventId/location` - Fetch latest victim position.
-- `PATCH /api/sos/:eventId/resolve` - Mark emergency as handled.
-- `GET /api/sos/history` - View personal SOS alert history.
+### User Profile (`/api/users`)
+- `GET /me` - Fetch current user profile.
+- `PATCH /me` - Update user profile.
+- `PATCH /me/location` - Update background location.
 
-### Guardians
-- `GET /api/guardians` - List current guardian circle.
-- `POST /api/guardians` - Invite a new guardian by phone/email.
-- `DELETE /api/guardians/:id` - Remove a guardian from circle.
-- `PATCH /api/guardians/:circleId/accept` - Accept a guardian invitation.
+### Emergency (SOS) (`/api/sos`)
+- `POST /trigger` - Initiate an SOS event (pings guardians + queues alerts).
+- `POST /:eventId/location` - Victim-side location pings.
+- `GET /:eventId/location` - Fetch latest victim position.
+- `GET /:eventId` - Fetch specific SOS event details (victim info, etc.).
+- `PATCH /:eventId/resolve` - Mark emergency as handled.
+- `GET /history` - View personal SOS alert history.
 
-### Map & Geo-Intelligence
-- `GET /api/map/nearby` - Search for infrastructure within radius.
-- `GET /api/map/nearest` - Find the single absolute closest emergency point.
-- `GET /api/map/route` - Calculate paths and ETAs via OSRM.
-- `GET /api/map/reverse-geocode` - Resolve coordinates to street address.
+### Guardians (`/api/guardians`)
+- `GET /` - List current guardian circle.
+- `GET /invites` - List pending invitations.
+- `POST /` - Invite a new guardian by phone/email.
+- `DELETE /:guardianId` - Remove a guardian from circle.
+- `PATCH /:circleId/accept` - Accept a guardian invitation.
 
-### Incidents
-- `POST /api/incidents` - Submit a new safety report.
-- `GET /api/incidents/nearby` - Fetch reports within visual range.
+### Map & Geo-Intelligence (`/api/map`)
+- `GET /nearby` - Search for infrastructure within radius (Google Maps Places).
+- `GET /nearest` - Find the single absolute closest emergency point.
+- `GET /route` - Calculate paths and ETAs via OSRM.
+- `GET /geocode/reverse` - Resolve coordinates to street address.
+- `GET /live/:sosEventId` - Fetch full live GeoJSON tracking trail.
+- `GET /heatmap` - Fetch geographic heatmaps for analytics.
+
+### Incidents (`/api/incidents`)
+- `POST /` - Submit a new safety report.
+- `GET /nearby` - Fetch reports within visual range.
+- `GET /:id` - Fetch single incident details.
+
+### Audio Evidence (`/api/evidence`)
+- `POST /:sosEventId/chunk` - Upload encrypted live audio chunk during active SOS.
+- `GET /:sosEventId/chunk/:chunkId` - Stream a specific audio chunk securely.
+- `GET /:sosEventId` - List all audio chunks collected for an SOS event.
+- `DELETE /:sosEventId` - Purge evidence securely (Owner/Admin).
+
+### Voice SOS (`/api/voice`)
+- `GET /settings` - Fetch voice activation settings.
+- `PUT /settings` - Update voice activation preferences.
+- `GET /keywords` - List registered voice trigger keywords.
+- `POST /keywords` - Add a custom voice keyword trigger.
+- `DELETE /keywords/:id` - Remove a custom keyword.
+- `POST /trigger` - Direct SOS trigger via background keyword match.
+
+### Admin (`/api/admin`)
+- `GET /stats` - Fetch overall system statistics.
+- `GET /heatmap` - Get localized cluster density data.
+- `GET /sos/active` - List currently active network-wide SOS events.
+- `PATCH /users/:id/role` - Elevate or revoke administrative rights.
 
 ---
 
@@ -140,7 +170,8 @@ ACCESS_TOKEN_SECRET=your_32_char_access_secret
 REFRESH_TOKEN_SECRET=your_32_char_refresh_secret
 
 # External APIs (Defaults provided)
-OVERPASS_API_URL=https://overpass-api.de/api/interpreter
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+OVERPASS_API_URL=https://overpass-api.de/api/interpreter (fallback)
 OSRM_API_URL=https://router.project-osrm.org
 NOMINATIM_API_URL=https://nominatim.openstreetmap.org
 

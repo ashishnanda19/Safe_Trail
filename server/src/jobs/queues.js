@@ -27,4 +27,12 @@ export const incidentQueue = new Queue('incidents', {
   defaultJobOptions,
 });
 
-export const queues = { alertQueue, incidentQueue };
+/**
+ * evidenceCleanupQueue — daily cron to purge evidence files older than 30 days
+ */
+export const evidenceCleanupQueue = new Queue('evidenceCleanup', {
+  connection: bullmqRedis,
+  defaultJobOptions,
+});
+
+export const queues = { alertQueue, incidentQueue, evidenceCleanupQueue };

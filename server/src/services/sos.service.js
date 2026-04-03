@@ -3,6 +3,18 @@ import { alertQueue } from '../jobs/queues.js';
 import { emitToRoom } from '../sockets/index.js';
 import { getNearestPlace } from './map.service.js';
 
+export const getSOSEvent = async (sosEventId) => {
+  const result = await db.query(
+    `SELECT e.id, e.user_id, e.status, e.triggered_at, e.resolved_at,
+            u.name, u.phone
+     FROM sos_events e
+     JOIN users u ON e.user_id = u.id
+     WHERE e.id = $1`,
+    [sosEventId]
+  );
+  return result.rows[0] || null;
+};
+
 /**
  * CORE FAN-OUT — triggers SOS and notifies all guardians in parallel.
  * This is the most critical function in the entire backend.
@@ -29,6 +41,13 @@ export const triggerSOS = async (userId, { latitude, longitude }, userName) => {
 
   const event = sosResult.rows[0];
   const guardians = guardiansResult.rows;
+
+  // Insert the initial location as the first ping so the live map works immediately
+  await db.query(
+    `INSERT INTO location_pings (sos_event_id, coordinates, accuracy)
+     VALUES ($1, ST_GeomFromEWKT($2), NULL)`,
+    [event.id, location]
+  ).catch(err => console.error('[SOS] Failed to insert initial location ping:', err.message));
 
   // 2. Fan-out — socket broadcast + job enqueueing + nearest places lookup happen in parallel
   // None of these block the HTTP response (we don't await the full chain)

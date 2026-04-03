@@ -13,6 +13,8 @@ import sosRoutes from './routes/sos.routes.js';
 import incidentRoutes from './routes/incident.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import mapRoutes from './routes/map.routes.js';
+import voiceRoutes from './routes/voice.routes.js';
+import evidenceRoutes from './routes/evidence.routes.js';
 
 const app = express();
 
@@ -54,6 +56,8 @@ app.use('/api/sos', sosRoutes);
 app.use('/api/incidents', incidentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/map', mapRoutes);
+app.use('/api/voice', voiceRoutes);
+app.use('/api/evidence', evidenceRoutes);
 
 // ─── 404 & Error Handling ─────────────────────────────────────────────────────
 app.use(notFound);

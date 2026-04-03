@@ -102,3 +102,21 @@ export const getHistory = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * GET /api/sos/:eventId  [JWT required]
+ */
+export const getEvent = async (req, res, next) => {
+  try {
+    const { eventId } = req.params;
+    const event = await sosService.getSOSEvent(eventId);
+
+    if (!event) {
+      return res.status(404).json({ success: false, message: 'SOS event not found.' });
+    }
+
+    return res.status(200).json({ success: true, data: { event } });
+  } catch (err) {
+    next(err);
+  }
+};

@@ -6,6 +6,8 @@ import BaseMap from '@/components/map/BaseMap';
 import LiveTracker from '@/components/map/LiveTracker';
 import { Button, Card } from '@/components/ui';
 import { getLatestLivePing } from '@/api/map.api';
+import { getSOSEvent } from '@/api/sos.api';
+import EvidenceViewer from '@/components/evidence/EvidenceViewer';
 
 const GuardianAlertPage = () => {
   const { id: sosEventId } = useParams();
@@ -13,15 +15,16 @@ const GuardianAlertPage = () => {
   const { socket } = useSocketStore();
 
   const [position, setPosition] = useState(null);
-  const [triggeredAt] = useState(new Date());
+  const [triggeredAt, setTriggeredAt] = useState(null);
   const [elapsed, setElapsed] = useState(0);
   const [sosUser, setSosUser] = useState(null);
   const [resolved, setResolved] = useState(false);
 
   // Elapsed timer
   useEffect(() => {
+    if (!triggeredAt) return;
     const interval = setInterval(() => {
-      setElapsed(Math.floor((Date.now() - triggeredAt) / 1000));
+      setElapsed(Math.floor((Date.now() - new Date(triggeredAt).getTime()) / 1000));
     }, 1000);
     return () => clearInterval(interval);
   }, [triggeredAt]);
@@ -32,9 +35,11 @@ const GuardianAlertPage = () => {
 
     socket.emit('map:join-sos', { sosEventId });
 
-    socket.on('map:position', ({ lat, lng, userName, userId }) => {
-      setPosition({ lat, lng });
-      if (userName) setSosUser({ name: userName, id: userId });
+    socket.on('map:position', (data) => {
+      const newLat = data.lat ?? data.latitude;
+      const newLng = data.lng ?? data.longitude;
+      setPosition({ lat: newLat, lng: newLng });
+      if (data.userName) setSosUser({ name: data.userName, id: data.userId });
     });
 
     socket.on('map:tracking-ended', () => {
@@ -47,11 +52,17 @@ const GuardianAlertPage = () => {
     };
   }, [socket, sosEventId]);
 
-  // Fetch initial position
+  // Fetch initial details and position
   useEffect(() => {
+    getSOSEvent(sosEventId).then(evt => {
+      setSosUser({ name: evt.name, phone: evt.phone });
+      setTriggeredAt(evt.triggered_at);
+      if (evt.status === 'resolved') setResolved(true);
+    }).catch(e => console.error("Failed to load SOS event:", e));
+
     getLatestLivePing(sosEventId)
-      .then(d => { if (d?.ping) setPosition({ lat: d.ping.lat, lng: d.ping.lng }); })
-      .catch(() => {});
+      .then(d => { if (d?.ping) setPosition({ lat: d.ping.latitude, lng: d.ping.longitude }); })
+      .catch((e) => console.error("Failed to load initial ping:", e));
   }, [sosEventId]);
 
   const mins = Math.floor(elapsed / 60);
@@ -102,15 +113,22 @@ const GuardianAlertPage = () => {
             <Card className="p-3">
               <p className="text-xs text-slate-500">Live location</p>
               <p className="text-sm font-medium text-slate-900 mt-0.5">
-                {position ? `${position.lat.toFixed(4)}, ${position.lng.toFixed(4)}` : 'Waiting…'}
+                {(position && typeof position.lat === 'number' && typeof position.lng === 'number') 
+                  ? `${position.lat.toFixed(4)}, ${position.lng.toFixed(4)}` 
+                  : 'Waiting…'}
               </p>
             </Card>
             <Card className="p-3">
               <p className="text-xs text-slate-500">Updated</p>
               <p className="text-sm font-medium text-slate-900 mt-0.5">
-                {position ? 'Live' : 'Pending'}
+                {position && typeof position.lat === 'number' ? 'Live' : 'Pending'}
               </p>
             </Card>
+          </div>
+
+          <div className="mt-1 mb-1">
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Audio Evidence</h3>
+            <EvidenceViewer sosEventId={sosEventId} />
           </div>
 
           {sosUser?.phone && (

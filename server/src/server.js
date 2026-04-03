@@ -5,6 +5,7 @@ import { testConnection } from './config/db.js';
 import { initSocketIO } from './sockets/index.js';
 import { startAlertWorker } from './jobs/workers/alertWorker.js';
 import { startIncidentWorker } from './jobs/workers/incidentWorker.js';
+import './jobs/workers/evidenceCleanupWorker.js'; // registers worker + cron on import
 
 const httpServer = http.createServer(app);
 

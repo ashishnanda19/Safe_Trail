@@ -9,6 +9,7 @@ import {
 import { useSosStore } from '@/store/sosStore';
 import { useSocketStore } from '@/store/socketStore';
 import { useGeolocation } from '@/hooks/useGeolocation';
+import { useEvidenceRecorder } from '@/hooks/useEvidenceRecorder';
 import { resolveSOS } from '@/api/sos.api';
 import { getNearbyPlaces, getRoute } from '@/api/map.api';
 import { listGuardians } from '@/api/guardian.api';
@@ -37,6 +38,9 @@ const SOSActivePage = () => {
   const { activeSosId, triggeredAt, guardianCount, clear } = useSosStore();
   const { socket } = useSocketStore();
   const { lat, lng, accuracy } = useGeolocation();
+
+  // ─── Silent evidence recorder — starts on mount, stops on unmount ────
+  useEvidenceRecorder(activeSosId);
 
   // ─── SOS timer ───────────────────────────────────────────────
   const [elapsed, setElapsed] = useState(0);
@@ -223,12 +227,12 @@ const SOSActivePage = () => {
             className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            Radius: <span className="text-white font-semibold ml-0.5">{sliderRadius >= 1000 ? `${sliderRadius / 1000}km` : `${sliderRadius}m`}</span>
+            Radius: <span className="text-white font-semibold ml-0.5">{sliderRadius >= 1000 ? `${(sliderRadius / 1000).toFixed(1)}km` : `${sliderRadius}m`}</span>
             <ChevronRight className={`w-3 h-3 ml-auto transition-transform ${showFilters ? 'rotate-90' : ''}`} />
           </button>
           {showFilters && (
             <input
-              type="range" min={500} max={20000} step={500}
+              type="range" min={500} max={50000} step={500}
               value={sliderRadius}
               onChange={e => setSliderRadius(Number(e.target.value))}
               onMouseUp={() => setRadius(sliderRadius)}

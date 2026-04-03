@@ -11,6 +11,11 @@ COPY src/ ./src/
 
 # Create non-root user for security
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Create default uploads directory and assign ownership to appuser
+# This ensures EACCES error does not occur when creating evidence chunks
+RUN mkdir -p /app/uploads && chown -R appuser:appgroup /app/uploads
+
 USER appuser
 
 EXPOSE 3000

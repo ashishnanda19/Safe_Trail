@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   postgres:
     image: postgis/postgis:16-3.4
@@ -45,6 +43,10 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:password@guardian_circle_postgres:5432/guardian_circle
       REDIS_URL: redis://guardian_circle_redis:6379
+    volumes:
+      # Mount source code so HMR/nodemon works while running in Docker
+      - ./server/src:/app/src
+      - server_uploads:/app/uploads
     ports:
       - "3001:3001"
     depends_on:
@@ -83,6 +85,14 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  adminer:
+    image: adminer
+    container_name: guardian_circle_adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres_data:
   redis_data:
+  server_uploads:

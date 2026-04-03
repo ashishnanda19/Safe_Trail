@@ -39,51 +39,137 @@ const formatDistance = (metres) => {
 };
 
 /**
- * Find nearby places via Overpass API with Redis caching
+ * OpenStreetMap Overpass API Endpoints (tried in parallel)
+ */
+const OVERPASS_ENDPOINTS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://lz4.overpass-api.de/api/interpreter',
+];
+
+/**
+ * Parse raw Overpass elements into a uniform place shape
+ */
+const parseOverpassElements = (elements, amenityType) =>
+  elements
+    .map(el => {
+      const pLat = el.lat ?? el.center?.lat;
+      const pLng = el.lon ?? el.center?.lon;
+      if (!pLat || !pLng) return null;
+      return {
+        id: el.id,
+        name: el.tags?.name || `Unnamed ${amenityType}`,
+        type: amenityType,
+        lat: pLat,
+        lng: pLng,
+        address:
+          [el.tags?.['addr:street'], el.tags?.['addr:city']].filter(Boolean).join(', ') || null,
+        phone: el.tags?.phone || null,
+        openingHours: el.tags?.opening_hours || null,
+      };
+    })
+    .filter(Boolean);
+
+/**
+ * Query all Overpass endpoints in parallel; resolve on first success.
+ * Max wait: 12 seconds (instead of 3 × 15 = 45 seconds sequential).
+ */
+const fetchFromOverpass = async (query) => {
+  const data = await Promise.any(
+    OVERPASS_ENDPOINTS.map(async (endpoint) => {
+      const url = `${endpoint}?data=${encodeURIComponent(query)}`;
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'SafeTraiL-App/1.0 (safety@safetrail.app)' },
+        signal: AbortSignal.timeout(12000),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status} from ${endpoint}`);
+      return res.json();
+    })
+  );
+  return data;
+};
+
+/**
+ * Nominatim structured search fallback.
+ * Converts center + radius to a bounding box and queries /search?amenity=...
+ */
+const fetchFromNominatim = async (lat, lng, radiusMetres, amenityType) => {
+  await nominatimDelay();
+
+  const deltaLat = radiusMetres / 111000;
+  const deltaLng = radiusMetres / (111000 * Math.cos((lat * Math.PI) / 180));
+
+  // Nominatim viewbox format: left,top,right,bottom  (minLng,maxLat,maxLng,minLat)
+  const viewbox = [
+    (lng - deltaLng).toFixed(6),
+    (lat + deltaLat).toFixed(6),
+    (lng + deltaLng).toFixed(6),
+    (lat - deltaLat).toFixed(6),
+  ].join(',');
+
+  const url =
+    `${env.NOMINATIM_API_URL}/search` +
+    `?amenity=${encodeURIComponent(amenityType)}` +
+    `&format=json&limit=50&bounded=1&viewbox=${viewbox}&addressdetails=1&extratags=1`;
+
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'SafeTraiL-App/1.0 (safety@safetrail.app)' },
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!res.ok) throw new Error(`Nominatim search error: ${res.status}`);
+
+  const items = await res.json();
+  return items
+    .filter(item => item.lat && item.lon)
+    .map(item => ({
+      id: item.osm_id,
+      name: item.name || item.display_name?.split(',')[0] || `Unnamed ${amenityType}`,
+      type: amenityType,
+      lat: parseFloat(item.lat),
+      lng: parseFloat(item.lon),
+      address: item.display_name || null,
+      phone: item.extratags?.phone || null,
+      openingHours: item.extratags?.opening_hours || null,
+    }));
+};
+
+/**
+ * Find nearby places — tries Overpass (parallel) then Nominatim as fallback.
  */
 export const findNearbyPlaces = async (lat, lng, radiusMetres = 3000, amenityType) => {
-  const cacheKey = `places:${lat.toFixed(4)}:${lng.toFixed(4)}:${radiusMetres}:${amenityType}`;
+  const cacheKey = `places:osm:${lat.toFixed(3)}:${lng.toFixed(3)}:${radiusMetres}:${amenityType}`;
 
-  // Check Redis cache first
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
+  try {
+    const cached = await redis.get(cacheKey);
+    if (cached) return JSON.parse(cached);
 
-  const query = `
-    [out:json][timeout:25];
-    (
-      node["amenity"="${amenityType}"](around:${radiusMetres},${lat},${lng});
-      way["amenity"="${amenityType}"](around:${radiusMetres},${lat},${lng});
-    );
-    out body center;
-  `;
+    const query = `
+      [out:json][timeout:20];
+      (
+        node["amenity"="${amenityType}"](around:${radiusMetres},${lat},${lng});
+        way["amenity"="${amenityType}"](around:${radiusMetres},${lat},${lng});
+        relation["amenity"="${amenityType}"](around:${radiusMetres},${lat},${lng});
+      );
+      out center;
+    `;
 
-  const response = await fetch(env.OVERPASS_API_URL, {
-    method: 'POST',
-    body: `data=${encodeURIComponent(query)}`,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    signal: AbortSignal.timeout(30000),
-  });
+    let places;
+    try {
+      const data = await fetchFromOverpass(query);
+      places = parseOverpassElements(data.elements || [], amenityType);
+      console.info(`[MapService] Overpass returned ${places.length} results for ${amenityType}`);
+    } catch (overpassErr) {
+      console.warn(`[MapService] Overpass failed (${overpassErr.message}), trying Nominatim fallback`);
+      places = await fetchFromNominatim(lat, lng, radiusMetres, amenityType);
+      console.info(`[MapService] Nominatim returned ${places.length} results for ${amenityType}`);
+    }
 
-  if (!response.ok) {
-    throw new Error(`Overpass API error: ${response.status}`);
+    await redis.setex(cacheKey, env.MAP_CACHE_TTL_PLACES, JSON.stringify(places));
+    return places;
+  } catch (err) {
+    console.warn(`[MapService] findNearbyPlaces failed gracefully: ${err.message}`);
+    return [];
   }
-
-  const data = await response.json();
-
-  const places = data.elements.map(el => ({
-    id: String(el.id),
-    name: el.tags?.name || `Unnamed ${amenityType}`,
-    type: amenityType,
-    lat: el.lat ?? el.center?.lat,
-    lng: el.lon ?? el.center?.lon,
-    phone: el.tags?.phone || el.tags?.['contact:phone'] || null,
-    address: el.tags?.['addr:full'] || el.tags?.['addr:street'] || null,
-    openingHours: el.tags?.opening_hours || null,
-  })).filter(p => p.lat && p.lng);
-
-  // Cache for 10 minutes
-  await redis.setex(cacheKey, env.MAP_CACHE_TTL_PLACES, JSON.stringify(places));
-  return places;
 };
 
 /**

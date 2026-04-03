@@ -30,7 +30,7 @@ const envSchema = z.object({
   FIREBASE_CLIENT_EMAIL: z.string().optional(),
 
   // External Map APIs
-  OVERPASS_API_URL: z.string().url().default('https://overpass-api.de/api/interpreter'),
+  OVERPASS_API_URL: z.string().default('https://overpass-api.de/api/interpreter'),
   OSRM_API_URL: z.string().url().default('https://router.project-osrm.org'),
   NOMINATIM_API_URL: z.string().url().default('https://nominatim.openstreetmap.org'),
 

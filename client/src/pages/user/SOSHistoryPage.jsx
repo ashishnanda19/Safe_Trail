@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Clock, CheckCircle, AlertCircle, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { getSosHistory } from '@/api/sos.api';
 import { Badge, Card, Skeleton } from '@/components/ui';
 import { Navbar, BottomNav } from '@/components/layout/Navbar';
+import EvidenceViewer from '@/components/evidence/EvidenceViewer';
 
 const SOSHistoryPage = () => {
   const { data, isLoading } = useQuery({
@@ -10,6 +12,11 @@ const SOSHistoryPage = () => {
     queryFn: () => getSosHistory({ limit: 20 }),
     staleTime: 1000 * 60 * 2,
   });
+
+  // Track which event cards have their evidence section expanded
+  const [expandedEvidence, setExpandedEvidence] = useState({});
+  const toggleEvidence = (id) =>
+    setExpandedEvidence(prev => ({ ...prev, [id]: !prev[id] }));
 
   const events = data?.data || [];
 
@@ -70,6 +77,25 @@ const SOSHistoryPage = () => {
                         <p className="text-xs text-slate-600 mt-1 italic">"{evt.resolution_note}"</p>
                       )}
                     </div>
+                  </div>
+
+                  {/* Evidence section */}
+                  <div className="mt-3 pt-3 border-t border-slate-100">
+                    <button
+                      onClick={() => toggleEvidence(evt.id)}
+                      className="flex items-center justify-between w-full text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors mb-2"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Lock className="w-3 h-3" />
+                        Evidence recordings
+                      </span>
+                      {expandedEvidence[evt.id]
+                        ? <ChevronUp className="w-3.5 h-3.5" />
+                        : <ChevronDown className="w-3.5 h-3.5" />}
+                    </button>
+                    {expandedEvidence[evt.id] && (
+                      <EvidenceViewer sosEventId={evt.id} />
+                    )}
                   </div>
                 </Card>
               );

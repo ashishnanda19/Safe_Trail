@@ -3,15 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   MapPin, Bell, Shield, Clock, CheckCircle, AlertCircle,
-  Users, ChevronRight, Phone, Navigation, Flag, LayoutGrid
+  Users, ChevronRight, Phone, Navigation, Flag, LayoutGrid, Mic
 } from 'lucide-react';
 import { MapContainer, TileLayer, CircleMarker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useAuthStore } from '@/store/authStore';
 import { useGeolocation } from '@/hooks/useGeolocation';
+import { useVoiceSOS } from '@/hooks/useVoiceSOS';
 import { getSosHistory } from '@/api/sos.api';
 import { reverseGeocode, getNearbyPlaces } from '@/api/map.api';
 import { listGuardians, listInvites } from '@/api/guardian.api';
+import { getVoiceSettings } from '@/api/voice.api';
 import SOSButton from '@/components/sos/SOSButton';
 import ReportForm from '@/components/incident/ReportForm';
 import { Badge, Card, Skeleton, Modal } from '@/components/ui';
@@ -87,6 +89,14 @@ const DashboardPage = () => {
   const recentSOS = historyData?.data || [];
   const pendingInvites = invites.filter(i => i.status === 'pending');
   const notifCount = Math.min(recentSOS.length + pendingInvites.length, 9);
+
+  // ─── Voice SOS ────────────────────────────────────────────────────────────
+  const { data: voiceSettings } = useQuery({
+    queryKey: ['voice', 'settings'],
+    queryFn:  getVoiceSettings,
+    staleTime: 1000 * 60 * 5,
+  });
+  const { isListening } = useVoiceSOS(voiceSettings);
 
   const handleQuickAction = (action) => {
     if (action.action === 'report') { setShowReportForm(true); return; }
@@ -376,6 +386,21 @@ const DashboardPage = () => {
 
       <BottomNav />
       <ReportForm isOpen={showReportForm} onClose={() => setShowReportForm(false)} lat={lat} lng={lng} />
+
+      {/* ─── Voice Active Indicator ─────────────────────────────────────────
+          Subtle bottom-left badge. Unobtrusive — won't reveal to bystanders
+          that the SOS is armed. Tap to go to settings. */}
+      {voiceSettings?.is_enabled && isListening && (
+        <button
+          onClick={() => navigate('/profile')}
+          className="fixed bottom-20 left-4 z-40 sm:bottom-6 flex items-center gap-1.5 bg-white/90 backdrop-blur border border-emerald-200 shadow-md px-3 py-1.5 rounded-full text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors"
+          aria-label="Voice SOS active — tap to open settings"
+        >
+          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shrink-0" />
+          <Mic className="w-3 h-3" />
+          Voice active
+        </button>
+      )}
 
       {/* Notifications panel */}
       <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)} title="Activity">

@@ -22,6 +22,9 @@ router.post('/:eventId/location', validate(locationPingSchema), sosController.ad
 // GET /api/sos/:eventId/location
 router.get('/:eventId/location', sosController.getLatestLocation);
 
+// GET /api/sos/:eventId
+router.get('/:eventId', sosController.getEvent);
+
 // PATCH /api/sos/:eventId/resolve
 router.patch('/:eventId/resolve', sosController.resolve);
 

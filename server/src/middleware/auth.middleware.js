@@ -8,16 +8,21 @@ import { env } from '../config/env.js';
  */
 export const authenticate = (req, res, next) => {
   try {
+    let token;
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        success: false,
-        message: 'Authentication required. Please provide a valid Bearer token.',
-      });
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (req.query.token) {
+      token = req.query.token;
     }
 
-    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required. Please provide a valid token.',
+      });
+    }
 
     const decoded = jwt.verify(token, env.ACCESS_TOKEN_SECRET);
     req.user = decoded;
