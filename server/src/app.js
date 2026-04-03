@@ -18,6 +18,9 @@ import evidenceRoutes from './routes/evidence.routes.js';
 
 const app = express();
 
+// Trust proxy (required for rate limiting correctly on Render/Vercel)
+app.set('trust proxy', 1);
+
 // ─── Security Middleware ───────────────────────────────────────────────────────
 app.use(helmet());
 app.use(cors({

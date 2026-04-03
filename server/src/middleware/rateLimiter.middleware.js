@@ -17,20 +17,20 @@ export const globalLimiter = rateLimit({
   handler: jsonHandler,
 });
 
-// Auth: POST /login — 5 per 15 minutes per IP
+// Auth: POST /login — 10 per 15 minutes per IP
 export const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   handler: jsonHandler,
   message: 'Too many login attempts. Try again in 15 minutes.',
 });
 
-// Auth: POST /register — 3 per hour per IP
+// Auth: POST /register — 20 per hour per IP
 export const registerLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 3,
+  max: 20,
   standardHeaders: true,
   legacyHeaders: false,
   handler: jsonHandler,
