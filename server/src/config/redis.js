@@ -1,35 +1,20 @@
 import Redis from 'ioredis';
 import { env } from './env.js';
 
-const createRedisClient = () => {
-  const client = new Redis(env.REDIS_URL, {
-    maxRetriesPerRequest: null, // Required for BullMQ
-    enableReadyCheck: false,
-    lazyConnect: false,
-    retryStrategy(times) {
-      const delay = Math.min(times * 50, 2000);
-      return delay;
-    },
-  });
-
-  client.on('connect', () => {
-    if (env.NODE_ENV !== 'test') {
-      console.log('🔴 Redis client connected');
-    }
-  });
-
-  client.on('error', (err) => {
-    console.error('❌ Redis client error:', err.message);
-  });
-
-  return client;
-};
+const getRedisOptions = () => ({
+  maxRetriesPerRequest: null, // Required for BullMQ
+  enableReadyCheck: false,
+  lazyConnect: false,
+  // Automatically enable TLS if rediss:// is used or in production
+  tls: (env.REDIS_URL.startsWith('rediss://') || env.NODE_ENV === 'production') ? {} : undefined,
+  retryStrategy(times) {
+    const delay = Math.min(times * 50, 2000);
+    return delay;
+  },
+});
 
 // Main Redis client for caching / pub-sub
-export const redis = createRedisClient();
+export const redis = new Redis(env.REDIS_URL, getRedisOptions());
 
-// Separate Redis connection for BullMQ (requires maxRetriesPerRequest: null)
-export const bullmqRedis = new Redis(env.REDIS_URL, {
-  maxRetriesPerRequest: null,
-  enableReadyCheck: false,
-});
+// Separate Redis connection for BullMQ
+export const bullmqRedis = new Redis(env.REDIS_URL, getRedisOptions());
