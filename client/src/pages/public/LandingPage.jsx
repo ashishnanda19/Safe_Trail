@@ -164,24 +164,33 @@ const LandingPage = () => {
                 </ul>
               </div>
               <div className="relative">
-                <div className="aspect-[4/3] rounded-[2.5rem] bg-slate-900 shadow-2xl overflow-hidden relative group">
-                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
-                  {/* CSS-based Mockup of Map UI */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10" />
-                  <div className="w-full h-full p-8 flex items-center justify-center">
-                    <div className="w-full max-w-sm bg-slate-800/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-700 transform group-hover:scale-105 transition-transform duration-500">
-                      <div className="flex items-center gap-4 mb-4 border-b border-slate-700 pb-4">
-                        <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
-                          <Globe className="w-6 h-6" />
-                        </div>
-                        <div>
-                          <div className="text-white font-bold tracking-wide">City General Hospital</div>
-                          <div className="text-slate-400 text-sm">1.2 km away • ETA 4 mins</div>
-                        </div>
-                      </div>
-                      <div className="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500 w-3/4 rounded-full" />
-                      </div>
+                <div className="w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 p-6 sm:p-8 transform group-hover:scale-[1.02] transition-transform duration-500">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold text-slate-800 tracking-tight">Nearest Help</h3>
+                    <button className="text-[#E53E6D] text-sm font-semibold hover:text-rose-600 transition-colors flex items-center">
+                      More on map <ChevronRight className="w-4 h-4 ml-1" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Hospital Card */}
+                    <div className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-slate-300 transition-colors cursor-pointer group/card shadow-sm hover:shadow-md">
+                      <div className="text-3xl mb-4">🏥</div>
+                      <h4 className="font-bold text-slate-900 mb-1 leading-tight line-clamp-1">Bharadwaj Hospital</h4>
+                      <p className="text-[#E53E6D] font-bold mb-4">2.6 km</p>
+                      <p className="text-slate-400 text-sm font-medium flex items-center group-hover/card:text-slate-500 transition-colors">
+                        Tap for route <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                      </p>
+                    </div>
+
+                    {/* Police Card */}
+                    <div className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-slate-300 transition-colors cursor-pointer group/card shadow-sm hover:shadow-md">
+                      <div className="text-3xl mb-4">🚓</div>
+                      <h4 className="font-bold text-slate-900 mb-1 leading-tight line-clamp-1">Karni Vihar Police Station Jaipur</h4>
+                      <p className="text-blue-500 font-bold mb-4">18.0 km</p>
+                      <p className="text-slate-400 text-sm font-medium flex items-center group-hover/card:text-slate-500 transition-colors">
+                        Tap for route <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                      </p>
                     </div>
                   </div>
                 </div>
