@@ -48,7 +48,7 @@ const LandingPage = () => {
                 Don't face emergencies <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E53E6D] to-rose-400">alone.</span>
               </h1>
               <p className="text-lg sm:text-xl text-slate-600 mb-10 leading-relaxed max-w-xl">
-                The world's first predictive emergency response ecosystem. We don't just react to crises—we provide the architectural safety net you need to move freely.
+                SafeTraiL is a premium, real-time emergency response platform designed to bridge the gap between victims, their personal guardians, and professional emergency services. With high-fidelity maps, real-time location tracking, and automated alerting, SafeTraiL ensures that help is never more than a heartbeat away.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -64,42 +64,16 @@ const LandingPage = () => {
                 </Link>
               </div>
 
-              <div className="mt-10 flex items-center gap-4 text-sm text-slate-500 font-medium">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center overflow-hidden">
-                      <Users className="w-4 h-4 text-slate-400" />
-                    </div>
-                  ))}
-                </div>
-                Trusted by 10,000+ Guardians
-              </div>
             </div>
 
             {/* Hero Mockup Graphic */}
             <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
-              <div className="relative rounded-[2.5rem] bg-slate-900/5 p-2 shadow-2xl backdrop-blur-2xl ring-1 ring-slate-900/10 transform lg:rotate-2 hover:rotate-0 transition-transform duration-700">
+              <div className="relative rounded-[2.5rem] bg-slate-900/5 p-2 shadow-2xl backdrop-blur-2xl ring-1 ring-slate-900/10 transform lg:rotate-2 hover:rotate-0 transition-transform duration-700 overflow-hidden group">
                 <img 
-                  src="/hero_mockup.png" 
-                  alt="High-fidelity SafeTraiL Dashboard Mockup" 
-                  className="rounded-[2rem] border border-white/20 shadow-inner w-full object-cover"
+                  src="/hero_map.png" 
+                  alt="SafeTraiL Live Map Tracking" 
+                  className="rounded-[2rem] border border-white/20 shadow-inner w-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
                 />
-                
-                {/* Floating Micro-UI Elements */}
-                <div className="absolute -left-8 top-1/4 bg-white p-4 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 flex items-center gap-3 animate-bounce" style={{ animationDuration: '3s' }}>
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                    <HeartPulse className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-400 font-medium">Vitals</div>
-                    <div className="text-sm font-bold text-slate-900">Stable</div>
-                  </div>
-                </div>
-
-                <div className="absolute -right-6 bottom-1/3 bg-slate-900 p-4 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-4 hover:-translate-y-1 transition-transform cursor-default">
-                  <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse" />
-                  <div className="text-sm font-bold text-white tracking-wide">Live Tracking Active</div>
-                </div>
               </div>
             </div>
           </div>
@@ -221,7 +195,7 @@ const LandingPage = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/register">
-                  <Button size="lg" className="w-full sm:w-auto bg-white text-slate-900 hover:bg-slate-100 hover:scale-105 transition-transform px-10 h-14 rounded-full font-bold text-lg">
+                  <Button size="lg" className="w-full sm:w-auto bg-white text-black hover:bg-slate-100 hover:scale-105 transition-transform px-10 h-14 rounded-full font-bold text-lg">
                     Start Your Free Account
                   </Button>
                 </Link>
