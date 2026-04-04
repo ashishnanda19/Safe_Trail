@@ -1,149 +1,255 @@
 import { Link } from 'react-router-dom';
-import { Shield, Radio, Users, MapPin, AudioLines, HeartPulse, ChevronRight } from 'lucide-react';
+import { Shield, Radio, Users, MapPin, AudioLines, HeartPulse, ChevronRight, Activity, Globe } from 'lucide-react';
 import { Button } from '@/components/ui';
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navbar */}
-      <nav className="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex flex-shrink-0 items-center gap-2">
-              <div className="inline-flex items-center justify-center w-8 h-8 bg-[#E53E6D] rounded shadow-sm">
-                <Shield className="w-5 h-5 text-white" strokeWidth={2} />
-              </div>
-              <span className="text-xl font-bold text-slate-900 tracking-tight">SafeTraiL</span>
+    <div className="w-full bg-white min-h-screen text-slate-900 font-sans cursor-default scroll-smooth">
+      {/* Dynamic Navbar */}
+      <nav className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-slate-200/50 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex flex-shrink-0 items-center gap-3 group cursor-pointer">
+            <div className="w-10 h-10 rounded-xl bg-[#E53E6D] flex items-center justify-center shadow-lg shadow-[#E53E6D]/20 group-hover:scale-105 transition-transform">
+              <Shield className="w-5 h-5 text-white" strokeWidth={2} />
             </div>
-            <div className="flex items-center gap-4">
-              <Link to="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
-                Log in
-              </Link>
-              <Link to="/register">
-                <Button size="sm">Get Started</Button>
-              </Link>
-            </div>
+            <span className="text-xl font-bold tracking-tight text-slate-900">SafeTraiL</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <Link to="/login" className="text-sm font-medium text-slate-500 hover:text-[#E53E6D] transition-colors">
+              Log in
+            </Link>
+            <Link to="/register">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">
+                Get Started
+              </Button>
+            </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <div className="relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#FCE4ED] via-white to-slate-100 -z-10" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6">
-            Your safety, <span className="text-[#E53E6D]">always connected</span>
-          </h1>
-          <p className="max-w-2xl mx-auto text-lg sm:text-xl text-slate-600 mb-10 leading-relaxed">
-            SafeTraiL is a complete emergency management platform. Request help instantly via physical buttons, voice commands, or on-screen alerts, and stream your status securely to trusted Guardians.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/register">
-              <Button size="lg" className="px-8 flex flex-row items-center gap-2">
-                Create Free Account
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </Link>
-            <Link to="/login">
-              <Button variant="outline" size="lg" className="px-8 border-slate-300 bg-white shadow-sm text-slate-700 hover:bg-slate-50">
-                Sign in to Dashboard
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
+      <main className="pt-20">
+        {/* Asymmetric Hero Section */}
+        <section className="relative overflow-hidden px-6 lg:px-8 max-w-7xl mx-auto pt-16 pb-24 sm:pt-24 sm:pb-32">
+          {/* Subtle Background Elements */}
+          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-[#FCE4ED] rounded-full blur-[120px] opacity-60 pointer-events-none" />
+          <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-blue-50 rounded-full blur-[100px] opacity-60 pointer-events-none" />
 
-      {/* Trust Badges / Quick Stats */}
-      <div className="border-y border-slate-200 bg-slate-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 bg-[#FCE4ED] rounded-full flex items-center justify-center text-[#E53E6D] mb-1">
-                <Radio className="w-5 h-5" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center relative z-10">
+            {/* Hero Copy */}
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FCE4ED] text-[#E53E6D] text-xs font-semibold tracking-wide uppercase mb-6 slide-in-top">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E53E6D] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E53E6D]"></span>
+                </span>
+                Live Emergency Protocols
               </div>
-              <span className="font-semibold text-slate-900">Real-time Ping</span>
-              <span className="text-xs text-slate-500">Live GPS tracking</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 bg-[#FCE4ED] rounded-full flex items-center justify-center text-[#E53E6D] mb-1">
-                <AudioLines className="w-5 h-5" />
-              </div>
-              <span className="font-semibold text-slate-900">Voice Evidence</span>
-              <span className="text-xs text-slate-500">Secure Audio Streams</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 bg-[#FCE4ED] rounded-full flex items-center justify-center text-[#E53E6D] mb-1">
-                <Users className="w-5 h-5" />
-              </div>
-              <span className="font-semibold text-slate-900">Guardian Circles</span>
-              <span className="text-xs text-slate-500">Trusted peer network</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 bg-[#FCE4ED] rounded-full flex items-center justify-center text-[#E53E6D] mb-1">
-                <MapPin className="w-5 h-5" />
-              </div>
-              <span className="font-semibold text-slate-900">Smart Mapping</span>
-              <span className="text-xs text-slate-500">Nearby Hospitals/Police</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Feature Highlight Section */}
-      <div className="py-20 sm:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Empowering personal security through technology</h2>
-            <p className="text-lg text-slate-600">
-              When every second counts, SafeTraiL ensures help is notified instantly with precise location data and critical audio evidence.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-slate-50 rounded-2xl p-8 border border-slate-100 hover:shadow-md transition-shadow">
-              <HeartPulse className="w-10 h-10 text-[#E53E6D] mb-5" />
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Instant Alerts</h3>
-              <p className="text-slate-600 leading-relaxed">
-                Trigger an SOS alert with a single tap, or use our hidden voice keywords to request help silently. Your phone immediately begins recording background audio and fetching high-precision GPS coordinates.
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.05]">
+                Don't face emergencies <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E53E6D] to-rose-400">alone.</span>
+              </h1>
+              <p className="text-lg sm:text-xl text-slate-600 mb-10 leading-relaxed max-w-xl">
+                The world's first predictive emergency response ecosystem. We don't just react to crises—we provide the architectural safety net you need to move freely.
               </p>
-            </div>
-            <div className="bg-slate-50 rounded-2xl p-8 border border-slate-100 hover:shadow-md transition-shadow">
-              <Users className="w-10 h-10 text-[#E53E6D] mb-5" />
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Guardian Network</h3>
-              <p className="text-slate-600 leading-relaxed">
-                Build your own "Guardian Circle" of trusted friends and family. During an emergency, they receive a loud push notification and a live-tracking dashboard to monitor your situation in real-time.
-              </p>
-            </div>
-            <div className="bg-slate-50 rounded-2xl p-8 border border-slate-100 hover:shadow-md transition-shadow relative overflow-hidden">
-              <MapPin className="w-10 h-10 text-[#E53E6D] mb-5" />
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Live Map Integration</h3>
-              <p className="text-slate-600 leading-relaxed">
-                Our dynamic map tracks emergency incidents and immediately identifies nearby crucial infrastructure like Hospitals, Police Stations, and Safe Zones using OpenStreetMap technology.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-slate-300 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-slate-800 pb-8 mb-8">
-            <div className="flex items-center gap-2">
-              <div className="inline-flex items-center justify-center w-8 h-8 bg-[#E53E6D] rounded shadow-sm">
-                <Shield className="w-5 h-5 text-white" strokeWidth={2} />
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to="/register">
+                  <Button size="lg" className="w-full sm:w-auto bg-[#E53E6D] hover:bg-[#d43863] text-white px-8 rounded-full shadow-lg shadow-[#E53E6D]/30 hover:shadow-xl hover:-translate-y-1 transition-all h-14 text-base font-semibold">
+                    Deploy Protection
+                  </Button>
+                </Link>
+                <Link to="/login">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto px-8 rounded-full h-14 border-slate-200 hover:border-slate-300 text-slate-700 bg-white hover:bg-slate-50 transition-all text-base font-medium">
+                    Access Dashboard
+                  </Button>
+                </Link>
               </div>
-              <span className="text-xl font-bold text-white tracking-tight">SafeTraiL</span>
+
+              <div className="mt-10 flex items-center gap-4 text-sm text-slate-500 font-medium">
+                <div className="flex -space-x-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center overflow-hidden">
+                      <Users className="w-4 h-4 text-slate-400" />
+                    </div>
+                  ))}
+                </div>
+                Trusted by 10,000+ Guardians
+              </div>
             </div>
-            <div className="flex gap-8 text-sm">
-              <div className="hover:text-white cursor-pointer transition-colors">About Us</div>
-              <div className="hover:text-white cursor-pointer transition-colors">Privacy Policy</div>
-              <div className="hover:text-white cursor-pointer transition-colors">Terms of Service</div>
-              <div className="hover:text-white cursor-pointer transition-colors">Contact Support</div>
+
+            {/* Hero Mockup Graphic */}
+            <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
+              <div className="relative rounded-[2.5rem] bg-slate-900/5 p-2 shadow-2xl backdrop-blur-2xl ring-1 ring-slate-900/10 transform lg:rotate-2 hover:rotate-0 transition-transform duration-700">
+                <img 
+                  src="/hero_mockup.png" 
+                  alt="High-fidelity SafeTraiL Dashboard Mockup" 
+                  className="rounded-[2rem] border border-white/20 shadow-inner w-full object-cover"
+                />
+                
+                {/* Floating Micro-UI Elements */}
+                <div className="absolute -left-8 top-1/4 bg-white p-4 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 flex items-center gap-3 animate-bounce" style={{ animationDuration: '3s' }}>
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <HeartPulse className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-400 font-medium">Vitals</div>
+                    <div className="text-sm font-bold text-slate-900">Stable</div>
+                  </div>
+                </div>
+
+                <div className="absolute -right-6 bottom-1/3 bg-slate-900 p-4 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-4 hover:-translate-y-1 transition-transform cursor-default">
+                  <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse" />
+                  <div className="text-sm font-bold text-white tracking-wide">Live Tracking Active</div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="text-center text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} SafeTraiL / GuardianCircle Project. All rights reserved.
+        </section>
+
+        {/* Feature 1: Left Text, Right Graphic */}
+        <section className="py-24 bg-slate-50 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+              <div className="order-2 md:order-1 relative">
+                <div className="aspect-[4/3] rounded-[2.5rem] bg-white border border-slate-100 shadow-xl overflow-hidden flex items-center justify-center group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#E53E6D]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {/* CSS-based Mockup of Voice UI */}
+                  <div className="relative w-64 h-64 rounded-full border border-slate-100 flex items-center justify-center p-8 bg-slate-50/50 shadow-inner">
+                    <div className="absolute inset-0 rounded-full border border-rose-200 animate-ping opacity-20" style={{ animationDuration: '2s' }} />
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-[#E53E6D] to-rose-400 shadow-lg shadow-rose-500/30 flex items-center justify-center transform group-hover:scale-105 transition-transform duration-500">
+                      <AudioLines className="w-16 h-16 text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="order-1 md:order-2">
+                <div className="w-14 h-14 rounded-2xl bg-rose-100 flex items-center justify-center mb-6">
+                  <Radio className="w-6 h-6 text-[#E53E6D]" />
+                </div>
+                <h2 className="text-4xl font-extrabold text-slate-900 mb-6 tracking-tight">Voice Evidence & Stealth Protocols</h2>
+                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                  Trigger an SOS silently using hidden voice keywords. The system immediately locks your screen, fetches high-precision GPS coordinates, and begins streaming encrypted background audio to your Guardian Circle.
+                </p>
+                <ul className="space-y-4">
+                  {['Customizable activation phrases', 'Encrypted cloud audio buffers', 'Works with screen locked'].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-slate-700 font-medium">
+                      <span className="w-6 h-6 rounded-full bg-[#E53E6D]/10 text-[#E53E6D] flex items-center justify-center text-xs">✓</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Feature 2: Left Graphic, Right Text */}
+        <section className="py-24 bg-white overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center mb-6">
+                  <MapPin className="w-6 h-6 text-blue-600" />
+                </div>
+                <h2 className="text-4xl font-extrabold text-slate-900 mb-6 tracking-tight">Smart Mapping & Live Routing</h2>
+                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                  Our dynamic OpenStreetMap integration tracks emergency incidents and immediately identifies crucial nearby infrastructure. When time is critical, the map automatically routes you to the nearest safe-haven.
+                </p>
+                <ul className="space-y-4">
+                  {['Sub-second location telemetry', 'Nearby Hospitals & Police Stations', 'Real-time incident heatmaps'].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-slate-700 font-medium">
+                      <span className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs">✓</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="relative">
+                <div className="aspect-[4/3] rounded-[2.5rem] bg-slate-900 shadow-2xl overflow-hidden relative group">
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+                  {/* CSS-based Mockup of Map UI */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10" />
+                  <div className="w-full h-full p-8 flex items-center justify-center">
+                    <div className="w-full max-w-sm bg-slate-800/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-700 transform group-hover:scale-105 transition-transform duration-500">
+                      <div className="flex items-center gap-4 mb-4 border-b border-slate-700 pb-4">
+                        <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                          <Globe className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <div className="text-white font-bold tracking-wide">City General Hospital</div>
+                          <div className="text-slate-400 text-sm">1.2 km away • ETA 4 mins</div>
+                        </div>
+                      </div>
+                      <div className="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
+                        <div className="h-full bg-blue-500 w-3/4 rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Global CTA Section (Dark Mode Anchor) */}
+        <section className="px-6 lg:px-8 py-24 mb-10">
+          <div className="max-w-7xl mx-auto rounded-[3rem] bg-slate-950 p-12 md:p-20 relative overflow-hidden text-center shadow-2xl">
+            {/* Background Texture */}
+            <div className="absolute inset-0 opacity-10">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+              </svg>
+            </div>
+            
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">Ready for a safer tomorrow?</h2>
+              <p className="text-xl text-slate-300 mb-10 leading-relaxed font-light">
+                Join thousands of users who trust SafeTraiL for their daily peace of mind. Build your Guardian Circle today.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/register">
+                  <Button size="lg" className="w-full sm:w-auto bg-white text-slate-900 hover:bg-slate-100 hover:scale-105 transition-transform px-10 h-14 rounded-full font-bold text-lg">
+                    Start Your Free Account
+                  </Button>
+                </Link>
+                <Link to="/login">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto px-10 h-14 rounded-full border-slate-700 hover:border-slate-600 text-white bg-white/5 backdrop-blur hover:bg-white/10 transition-colors font-medium text-lg">
+                    Sign in to Network
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Modern Minimal Footer */}
+      <footer className="border-t border-slate-200 bg-slate-50 pt-16 pb-8">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center">
+                <Shield className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-xl font-bold tracking-tight text-slate-900">SafeTraiL</span>
+            </div>
+            <div className="flex flex-wrap justify-center gap-8 text-sm font-medium text-slate-500">
+              <span className="hover:text-slate-900 cursor-pointer transition-colors">Platform</span>
+              <span className="hover:text-slate-900 cursor-pointer transition-colors">Privacy Protocol</span>
+              <span className="hover:text-slate-900 cursor-pointer transition-colors">Emergency Terms</span>
+              <span className="hover:text-slate-900 cursor-pointer transition-colors">Status</span>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-slate-200/60 text-xs text-slate-400 gap-4">
+            <p>© {new Date().getFullYear()} SafeTraiL Safety Ecosystem. Precision engineered.</p>
+            <div className="flex items-center gap-2 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              All Systems Operational
+            </div>
           </div>
         </div>
       </footer>
