@@ -191,11 +191,11 @@ const LandingPage = () => {
             <div className="relative z-10 max-w-3xl mx-auto">
               <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">Ready for a safer tomorrow?</h2>
               <p className="text-xl text-slate-300 mb-10 leading-relaxed font-light">
-                Join thousands of users who trust SafeTraiL for their daily peace of mind. Build your Guardian Circle today.
+                Join SafeTraiL for daily peace of mind. Build your Guardian Circle today.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/register">
-                  <Button size="lg" className="w-full sm:w-auto bg-white text-black hover:bg-slate-100 hover:scale-105 transition-transform px-10 h-14 rounded-full font-bold text-lg">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto px-10 h-14 rounded-full border-slate-700 hover:border-slate-600 text-white bg-white/5 backdrop-blur hover:bg-white/10 transition-colors font-medium text-lg">
                     Start Your Free Account
                   </Button>
                 </Link>
