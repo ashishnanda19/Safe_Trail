@@ -2,6 +2,9 @@ import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
 import AppShell from '@/components/layout/AppShell';
 
+// Public / Landing
+import LandingPage from '@/pages/public/LandingPage';
+
 // Auth
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
@@ -41,7 +44,7 @@ const AuthenticatedLayout = () => (
 );
 
 export const router = createBrowserRouter([
-  { path: '/', element: <Navigate to="/dashboard" replace /> },
+  { path: '/', element: <LandingPage /> },
 
   // Public (no socket needed)
   { path: '/login', element: <LoginPage /> },
