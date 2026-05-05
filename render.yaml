@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: guardian-circle-api
+    runtime: node
+    region: singapore  # Closest free region to India
+    plan: free
+    rootDir: server
+    buildCommand: npm ci --only=production
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000  # Render assigns PORT=10000 by default
+      - key: DATABASE_URL
+        sync: false  # Set this manually in Render dashboard (Supabase URL)
+      - key: REDIS_URL
+        sync: false  # Set this manually in Render dashboard
+      - key: ACCESS_TOKEN_SECRET
+        sync: false
+      - key: REFRESH_TOKEN_SECRET
+        sync: false
+      - key: ACCESS_TOKEN_EXPIRES_IN
+        value: 15m
+      - key: REFRESH_TOKEN_EXPIRES_IN
+        value: 7d
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_NUMBER
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: OVERPASS_API_URL
+        value: https://overpass-api.de/api/interpreter
+      - key: OSRM_API_URL
+        value: https://router.project-osrm.org
+      - key: NOMINATIM_API_URL
+        value: https://nominatim.openstreetmap.org
+      - key: MAP_CACHE_TTL_PLACES
+        value: 600
+      - key: MAP_CACHE_TTL_ROUTES
+        value: 300
+      - key: MAP_CACHE_TTL_GEOCODE
+        value: 3600
+      - key: UPLOAD_DIR
+        value: ./uploads
+      - key: MAX_EVIDENCE_CHUNK_SIZE_MB
+        value: 10
+      - key: EVIDENCE_RETENTION_DAYS
+        value: 30
