@@ -18,9 +18,15 @@ SafeTraiL is a premium, real-time emergency response platform designed to bridge
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **Real-time Engine**: Socket.io
-- **Database**: PostgreSQL with PostGIS extension (Spatial queries)
-- **Task Queue**: Bull + Redis (Async SMS/Push alerts)
+- **Database**: PostgreSQL with PostGIS extension via **Supabase** (Spatial queries)
+- **Task Queue**: BullMQ + Redis via **Upstash** (Async SMS/Push alerts)
 - **Validation**: Zod
+
+### Infrastructure & Hosting
+- **Frontend**: Vercel
+- **Backend API**: Render (Node.js Web Service)
+- **Database**: [Supabase](https://supabase.com) — Free-tier managed PostgreSQL + PostGIS
+- **Cache & Queues**: [Upstash](https://upstash.com) — Free-tier serverless Redis (TLS)
 
 ### External APIs
 - **Nominatim**: Reverse geocoding (Coordinates to Addresses)
@@ -45,12 +51,14 @@ SafeTraiL/
 │   ├── src/
 │   │   ├── controllers/    # Request handlers
 │   │   ├── db/             # PostgreSQL queries & migrations
-│   │   ├── jobs/           # Bull workers (Alerting, Processing)
+│   │   ├── jobs/           # BullMQ workers (Alerting, Processing)
 │   │   ├── routes/         # API Endpoint definitions
 │   │   ├── services/       # Domain logic (SOS, Maps, Auth)
 │   │   └── sockets/        # Real-time event handlers
 ├── assets/                 # Project documentation images
-└── docker-compose.yml       # Containerized environment setup
+├── supabase_schema.sql      # Unified DB schema for Supabase SQL Editor
+├── render.yaml             # Render deployment configuration
+└── docker-compose.yml      # Local development environment
 ```
 
 ---
@@ -145,56 +153,100 @@ SafeTraiL follows a **Distributed Event-Driven Architecture**. Real-time locatio
 ##  Setup & Installation
 
 ### Prerequisites
-- Node.js (v18+)
-- PostgreSQL with PostGIS extension
-- Redis server
+- Node.js (v20+)
+- A [Supabase](https://supabase.com) project (free tier) with PostGIS enabled
+- An [Upstash](https://upstash.com) Redis instance (free tier)
 - Twilio Account (for SMS alerts)
 
-### 1. Environment Variables (`.env`)
+### 1. Database Setup (Supabase)
 
-Create a `.env` file in the `server` directory:
+1. Create a free project at [supabase.com](https://supabase.com).
+2. Go to **SQL Editor** → **New Query**.
+3. Copy the contents of [`supabase_schema.sql`](./supabase_schema.sql) and run it.
+4. Go to **Table Editor** to confirm all tables were created.
+5. Copy your **Session mode connection string** from **Project Settings → Database**.
+
+### 2. Redis Setup (Upstash)
+
+1. Create a free Redis database at [upstash.com](https://upstash.com).
+2. Copy the **Redis URL** (starts with `rediss://`).
+
+### 3. Environment Variables
+
+Create a `server/.env` file. Use [`server/.env.example`](./server/.env.example) as a template:
 
 ```env
-# Server Config
-PORT=3000
 NODE_ENV=development
+PORT=3001
 
-# Database
-DATABASE_URL=postgres://user:pass@localhost:5432/safetrail
+# Supabase PostgreSQL
+DATABASE_URL=postgresql://postgres.<project-ref>:<password>@aws-X.pooler.supabase.com:5432/postgres
 
-# Caching & Queues
-REDIS_URL=redis://localhost:6379
+# Upstash Redis (TLS)
+REDIS_URL=rediss://default:<password>@<host>.upstash.io:6379
 
-# Security
-ACCESS_TOKEN_SECRET=your_32_char_access_secret
-REFRESH_TOKEN_SECRET=your_32_char_refresh_secret
+# JWT Secrets (generate strong random strings, min 32 chars)
+ACCESS_TOKEN_SECRET=your_access_token_secret_here
+REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
+ACCESS_TOKEN_EXPIRES_IN=15m
+REFRESH_TOKEN_EXPIRES_IN=7d
 
-# External APIs (Defaults provided)
-OVERPASS_API_URL=https://overpass-api.de/api/interpreter
-OSRM_API_URL=https://router.project-osrm.org
-NOMINATIM_API_URL=https://nominatim.openstreetmap.org
+# Twilio (optional — SMS alerts skipped if not set)
+TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=+1xxxxxxxxxx
 
-# Optional: Notifications
-TWILIO_ACCOUNT_SID=your_sid
-TWILIO_AUTH_TOKEN=your_token
-TWILIO_PHONE_NUMBER=your_number
+# Firebase Admin SDK (optional — push notifications skipped if not set)
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk@your-project.iam.gserviceaccount.com
 ```
 
-### 2. Backend Setup
+### 4. Local Development (Docker)
+
+Both the database and Redis are cloud-hosted. The local Docker setup only runs the backend API and client:
+
+```bash
+docker compose up --build
+```
+
+The application will be accessible at `http://localhost:5173`.
+
+### 5. Running Without Docker
+
+**Backend:**
 ```bash
 cd server
 npm install
 npm run dev
 ```
 
-### 3. Frontend Setup
+**Frontend:**
 ```bash
 cd client
 npm install
 npm run dev
 ```
 
-The application will be accessible at `http://localhost:5173`.
+---
+
+##  Deployment
+
+| Service | Platform | Notes |
+|---------|----------|-------|
+| Frontend | **Vercel** | Auto-deploys on push to `main` |
+| Backend API | **Render** | Configured via `render.yaml` |
+| Database | **Supabase** | Free-tier PostgreSQL + PostGIS |
+| Cache & Queues | **Upstash** | Free-tier serverless Redis (TLS) |
+
+### Deploying to Render
+
+The [`render.yaml`](./render.yaml) file defines the backend web service. Set the following environment variables in the Render dashboard under your web service → **Environment**:
+
+- `DATABASE_URL` — Your Supabase session-mode connection string
+- `REDIS_URL` — Your Upstash Redis URL (`rediss://...`)
+- `ACCESS_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`
+- `TWILIO_*` and `FIREBASE_*` credentials
 
 ---
 
