@@ -3,6 +3,10 @@
 SafeTraiL is a premium, real-time emergency response platform designed to bridge the gap between victims, their personal guardians, and professional emergency services. With high-fidelity maps, real-time location tracking, and automated alerting, SafeTraiL ensures that help is never more than a heartbeat away.
 
 ---
+
+## Project Demo
+
+[![Watch the video](https://img.youtube.com/vi/SWXXveQSONI/0.jpg)](https://www.youtube.com/watch?v=SWXXveQSONI)
  
 ##  Tech Stack
 
