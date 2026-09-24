@@ -40,6 +40,10 @@ SafeTraiL is a premium, real-time emergency response platform designed to bridge
 
 ---
 
+## Architecture
+
+![SafeTraiL System Design](SafeTraiL.png)
+
 ##  Project Structure
 
 ```bash
